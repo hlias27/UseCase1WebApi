@@ -44,3 +44,4 @@ jobs:
 
     - name: End SonarCloud scan
       run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      working-directory: "UseCase1WebApi"
