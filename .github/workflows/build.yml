@@ -44,5 +44,5 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"hlias27_UseCase1WebApi" /o:"hlias27" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          .\.sonar\scanner\dotnet-sonarscanner build /k:"hlias27_UseCase1WebApi/UseCase1WebApi.sln"
+          .\.sonar\scanner\dotnet-sonarscanner /k:"hlias27_UseCase1WebApi/UseCase1WebApi.sln" /t:Rebuild
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
