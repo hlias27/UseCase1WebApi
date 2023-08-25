@@ -15,7 +15,7 @@ public class RestCountriesController : ControllerBase
 	}
 
 	[HttpGet(Name = "GetRestCountries")]
-	public async Task<IEnumerable<object>?> Get(string? filter = null, int? param2 = null, string? param3 = null)
+	public async Task<IEnumerable<object>?> Get(string? filter = null, int? population = null, string? param3 = null)
 	{
 		using var httpClient = new HttpClient();
 		var response = await httpClient.GetAsync(URL);
@@ -23,15 +23,32 @@ public class RestCountriesController : ControllerBase
 
 		var countries = JsonSerializer.Deserialize<List<RestCountries>>(countriesString);
 
-		if (!string.IsNullOrWhiteSpace(filter) && countries != null)
+		if (countries == null)
 		{
-			var filterValue = filter.ToLower().Trim();
-			
-			return countries.Where(c => c.name.common.ToLower().Contains(filterValue)).ToList();
+			return null;
 		}
-			
+
+		if (!string.IsNullOrWhiteSpace(filter))
+		{
+			countries = FilterByName(countries, filter);
+		}
+
+		if (population.HasValue)
+		{
+			countries = FilterByPopulation(countries, population.Value);
+		}
+
 
 		return countries;
 	}
 
+	private List<RestCountries> FilterByName(List<RestCountries> countries, string filter)
+	{
+		var filterValue = filter.ToLower().Trim();
+			
+		return countries.Where(c => c.name.common.ToLower().Contains(filterValue)).ToList();
+	}
+
+	private List<RestCountries> FilterByPopulation(List<RestCountries> countries, int population) => 
+		countries.Where(c => c.population/10000000 < population).ToList();
 }
