@@ -15,12 +15,23 @@ public class RestCountriesController : ControllerBase
 	}
 
 	[HttpGet(Name = "GetRestCountries")]
-	public async Task<IEnumerable<object>?> Get(string? param1 = null, int? param2 = null, string? param3 = null)
+	public async Task<IEnumerable<object>?> Get(string? filter = null, int? param2 = null, string? param3 = null)
 	{
 		using var httpClient = new HttpClient();
 		var response = await httpClient.GetAsync(URL);
 		var countriesString = await response.Content.ReadAsStringAsync();
 
-		return JsonSerializer.Deserialize<List<object>>(countriesString);
+		var countries = JsonSerializer.Deserialize<List<RestCountries>>(countriesString);
+
+		if (!string.IsNullOrWhiteSpace(filter) && countries != null)
+		{
+			var filterValue = filter.ToLower().Trim();
+			
+			return countries.Where(c => c.name.common.ToLower().Contains(filterValue)).ToList();
+		}
+			
+
+		return countries;
 	}
+
 }
