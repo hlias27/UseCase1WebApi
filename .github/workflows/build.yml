@@ -40,7 +40,7 @@ jobs:
 
     - name: Clean and Build project
       run: dotnet clean && dotnet build
-      working-directory: "UseCase1WebApi/UseCase1WebApi.sln"
+      working-directory: "UseCase1WebApi\UseCase1WebApi.sln"
 
     - name: End SonarCloud scan
       run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
