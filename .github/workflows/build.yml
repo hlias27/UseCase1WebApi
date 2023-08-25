@@ -36,10 +36,10 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
     - name: Begin SonarCloud scan
-      run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"hlias27_UseCase1WebApi" /o:"hlias27" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose=true
+      run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"hlias27_UseCase1WebApi" /o:"hlias27" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
     - name: Clean and Build project
       run: dotnet build .\UseCase1WebApi\UseCase1WebApi.sln
 
     - name: End SonarCloud scan
-      run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.verbose=true
+      run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
