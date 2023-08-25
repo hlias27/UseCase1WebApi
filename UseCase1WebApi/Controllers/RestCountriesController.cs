@@ -15,7 +15,7 @@ public class RestCountriesController : ControllerBase
 	}
 
 	[HttpGet(Name = "GetRestCountries")]
-	public async Task<IEnumerable<object>?> Get(string? filter = null, int? population = null, string? sortBy = null)
+	public async Task<IEnumerable<object>?> Get(int firstRecordsCount, string? filter = null, int? population = null, string? sortBy = null)
 	{
 		using var httpClient = new HttpClient();
 		var response = await httpClient.GetAsync(URL);
@@ -43,7 +43,7 @@ public class RestCountriesController : ControllerBase
 			countries = SortBy(countries, sortBy);
 		}
 
-		return countries;
+		return countries.Take(firstRecordsCount);
 	}
 
 	private List<RestCountries> FilterByName(IEnumerable<RestCountries> countries, string filter)
