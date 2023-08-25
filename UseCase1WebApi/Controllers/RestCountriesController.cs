@@ -10,15 +10,17 @@ public class RestCountriesController : ControllerBase
 {
 	private readonly string URL = "https://restcountries.com/v3.1/all";
 
-	public RestCountriesController()
+	private readonly HttpClient _httpClient;
+
+	public RestCountriesController(HttpClient client)
 	{
+		_httpClient = client;
 	}
 
 	[HttpGet(Name = "GetRestCountries")]
 	public async Task<IEnumerable<object>?> Get(int firstRecordsCount, string? filter = null, int? population = null, string? sortBy = null)
 	{
-		using var httpClient = new HttpClient();
-		var response = await httpClient.GetAsync(URL);
+		var response = await _httpClient.GetAsync(URL);
 		var countriesString = await response.Content.ReadAsStringAsync();
 
 		var countries = JsonSerializer.Deserialize<IEnumerable<RestCountries>>(countriesString);
