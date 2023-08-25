@@ -15,13 +15,13 @@ public class RestCountriesController : ControllerBase
 	}
 
 	[HttpGet(Name = "GetRestCountries")]
-	public async Task<IEnumerable<object>?> Get(string? filter = null, int? population = null, string? param3 = null)
+	public async Task<IEnumerable<object>?> Get(string? filter = null, int? population = null, string? sortBy = null)
 	{
 		using var httpClient = new HttpClient();
 		var response = await httpClient.GetAsync(URL);
 		var countriesString = await response.Content.ReadAsStringAsync();
 
-		var countries = JsonSerializer.Deserialize<List<RestCountries>>(countriesString);
+		var countries = JsonSerializer.Deserialize<IEnumerable<RestCountries>>(countriesString);
 
 		if (countries == null)
 		{
@@ -38,17 +38,29 @@ public class RestCountriesController : ControllerBase
 			countries = FilterByPopulation(countries, population.Value);
 		}
 
+		if (!string.IsNullOrWhiteSpace(sortBy))
+		{
+			countries = SortBy(countries, sortBy);
+		}
 
 		return countries;
 	}
 
-	private List<RestCountries> FilterByName(List<RestCountries> countries, string filter)
+	private List<RestCountries> FilterByName(IEnumerable<RestCountries> countries, string filter)
 	{
 		var filterValue = filter.ToLower().Trim();
-			
+
 		return countries.Where(c => c.name.common.ToLower().Contains(filterValue)).ToList();
 	}
 
-	private List<RestCountries> FilterByPopulation(List<RestCountries> countries, int population) => 
-		countries.Where(c => c.population/10000000 < population).ToList();
+	private List<RestCountries> FilterByPopulation(IEnumerable<RestCountries> countries, int population) =>
+		countries.Where(c => c.population / 10000000 < population).ToList();
+
+	private IEnumerable<RestCountries> SortBy(IEnumerable<RestCountries> countries, string sort) =>
+		sort switch
+		{
+			"ascend" => countries.OrderBy(x => x.name.common),
+			"descend" => countries.OrderByDescending(x => x.name.common),
+			_ => countries
+		};
 }
